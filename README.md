@@ -25,7 +25,7 @@ A centralized progress hub for Windows. Instead of every application spawning it
 ### Configuration
 ```csharp
 //Set the server path
-AdiProgressClient.AdiProgressClient.ServerPath = @"XXX\AdiProgress.exe";
+AdiProgressClient.AdiProgressClient.ServerPath = @"c:\Tools\AdiProgress.exe";
 ```
 ### Synchronous Progress (Standard)
 ```csharp
