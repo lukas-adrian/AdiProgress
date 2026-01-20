@@ -19,7 +19,7 @@ A centralized progress hub for Windows. Instead of every application spawning it
 -   **Communication:** **Named Pipes** (allows cross-version compatibility).
 -   **Deployment:** No Service required. Client launches the Server `.exe` on demand.
 -   **Customization:** Appearance is configured via JSON (colors, fonts, etc.).
--   
+  
 ## Usage Example
 
 ### Configuration
