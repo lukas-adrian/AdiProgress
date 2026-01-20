@@ -1,0 +1,264 @@
+﻿<Window x:Class="AdiProgress.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:AdiProgress.Converters"
+        Title="AdiProgress"
+        Width="{DynamicResource WindowWidth}" 
+        Height="Auto"
+        MinHeight="{DynamicResource WindowMinHeight}"
+        SizeToContent="Height"
+        MaxHeight="{DynamicResource WindowMaxHeight}"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        Left="20"
+        Top="20"
+        Visibility="Hidden"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- Converters -->
+        <local:ProgressWidthConverter x:Key="ProgressWidthConverter"/>
+        <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+        <!-- Modern color palette -->
+        <SolidColorBrush x:Key="BackgroundBrush" Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#2D3436"/>
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#212121"/>
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#757575"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#E0E0E0"/>
+        <SolidColorBrush x:Key="ProgressBrush" Color="#2ECC71"/>
+        <SolidColorBrush x:Key="CancelBrush" Color="#F44336"/>
+
+        <!-- Drop shadow effect -->
+        <DropShadowEffect x:Key="CardShadow" 
+                          BlurRadius="20" 
+                          ShadowDepth="2" 
+                          Opacity="0.2" 
+                          Color="#000000"/>
+    </Window.Resources>
+
+    <Border Background="{DynamicResource BackgroundBrush}"
+            CornerRadius="{DynamicResource BorderRadius}"
+            Padding="0"
+            Effect="{StaticResource CardShadow}">
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" 
+                    Background="{StaticResource AccentBrush}"
+                    CornerRadius="12,12,0,0"
+                    Padding="16,6"
+                    MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <TextBlock x:Name="HeaderTitle"
+                           Text="AdiProgress" 
+                           FontSize="10" 
+                           FontWeight="Bold"
+                           Foreground="White"
+                           Opacity="0.6"
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center"/>
+            </Border>
+
+            <!-- Task Groups ScrollViewer -->
+            <ScrollViewer Grid.Row="1" 
+                          VerticalScrollBarVisibility="Auto"
+                          MaxHeight="500"
+                          Padding="12">
+                
+                <ItemsControl ItemsSource="{Binding TaskGroups}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <!-- Category Card -->
+                            <Border Background="{StaticResource CardBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Margin="0,0,0,12"
+                                    Padding="16">
+                                
+                                <StackPanel>
+                                    <!-- Category Header -->
+                                    <TextBlock Text="{Binding Category}" 
+                                               FontSize="{DynamicResource HeaderFontSize}"
+                                               FontWeight="SemiBold"
+                                               FontFamily="{DynamicResource MainFontFamily}"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               Margin="0,0,0,12"/>
+
+                                    <!-- Tasks List -->
+                                    <ItemsControl ItemsSource="{Binding Tasks}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Padding="0,0,0,16">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                        </Grid.RowDefinitions>
+                                                        
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <!-- Status Text -->
+                                                        <TextBlock Grid.Row="0" 
+                                                                   Grid.Column="0"
+                                                                   Text="{Binding Status}" 
+                                                                   FontSize="{DynamicResource MainFontSize}"
+                                                                   FontFamily="{DynamicResource MainFontFamily}"
+                                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   Margin="0,0,8,4"/>
+
+                                                        <!-- Progress Percentage -->
+                                                        <TextBlock Grid.Row="0" 
+                                                                   Grid.Column="1"
+                                                                   FontSize="{DynamicResource MainFontSize}"
+                                                                   FontFamily="{DynamicResource MainFontFamily}"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="{StaticResource TextPrimaryBrush}">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsIndeterminate}" Value="True">
+                                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                                            <Setter Property="Background" Value="Red"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0}%">
+                                                                    <Binding Path="Progress"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+
+                                                        <!-- Progress Bar -->
+                                                        <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Height="{DynamicResource ProgressBarHeight}"  Margin="0,0,0,8"
+                                                                     Value="{Binding Progress}" 
+                                                                     IsIndeterminate="{Binding IsIndeterminate}"
+                                                                     Background="#E0E0E0"
+                                                                     Foreground="{StaticResource ProgressBrush}"
+                                                                     BorderThickness="0">
+                                                            <ProgressBar.Style>
+                                                                <Style TargetType="ProgressBar">
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="ProgressBar">
+                                                                                <Grid x:Name="TemplateRoot">
+                                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="3"/>
+                                                                                    <Border x:Name="PART_Indicator" 
+                                                                                            Background="{TemplateBinding Foreground}" 
+                                                                                            CornerRadius="3" 
+                                                                                            HorizontalAlignment="Left"/>
+                                                                                </Grid>
+                                                                                <ControlTemplate.Triggers>
+                                                                                    <Trigger Property="IsIndeterminate" Value="True">
+                                                                                        <Setter TargetName="PART_Indicator" Property="Width" Value="60"/>
+                                                                                        <Trigger.EnterActions>
+                                                                                            <BeginStoryboard Name="Marquee">
+                                                                                                <Storyboard RepeatBehavior="Forever">
+                                                                                                    <ThicknessAnimation Storyboard.TargetName="PART_Indicator"
+                                                                                                        Storyboard.TargetProperty="Margin"
+                                                                                                        From="-60,0,0,0" To="300,0,0,0" Duration="0:0:1.5" />
+                                                                                                </Storyboard>
+                                                                                            </BeginStoryboard>
+                                                                                        </Trigger.EnterActions>
+                                                                                    </Trigger>
+                                                                                    <Trigger Property="IsIndeterminate" Value="False">
+                                                                                        <Setter TargetName="PART_Indicator" Property="Width">
+                                                                                            <Setter.Value>
+                                                                                                <MultiBinding Converter="{StaticResource ProgressWidthConverter}">
+                                                                                                    <Binding Path="Value" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                                                                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                                                                </MultiBinding>
+                                                                                            </Setter.Value>
+                                                                                        </Setter>
+                                                                                    </Trigger>
+                                                                                </ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </ProgressBar.Style>
+                                                        </ProgressBar>
+                                                        <!-- Cancel Button -->
+                                                        <Button Grid.Row="2"
+                                                                Grid.Column="0"
+                                                                Grid.ColumnSpan="2"
+                                                                Content="Cancel"
+                                                                Height="28"
+                                                                Padding="12,0"
+                                                                HorizontalAlignment="Right"
+                                                                Background="{StaticResource CancelBrush}"
+                                                                Foreground="White"
+                                                                BorderThickness="0"
+                                                                FontSize="{DynamicResource CancelButtonFontSize}"
+                                                                Cursor="Hand"
+                                                                Click="CancelTask_Click"
+                                                                Tag="{Binding}">
+                                                            <Button.Visibility>
+                                                                <Binding Path="AllowCancel">
+                                                                    <Binding.Converter>
+                                                                        <StaticResource ResourceKey="BoolToVisibilityConverter"/>
+                                                                    </Binding.Converter>
+                                                                </Binding>
+                                                            </Button.Visibility>
+                                                            <Button.IsEnabled>
+                                                                <Binding Path="IsCancelling" Converter="{StaticResource InverseBoolConverter}"/>
+                                                            </Button.IsEnabled>
+                                                            <Button.Style>
+                                                                <Style TargetType="Button">
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="Button">
+                                                                                <Border Background="{TemplateBinding Background}"
+                                                                                        CornerRadius="4"
+                                                                                        Opacity="{TemplateBinding Opacity}">
+                                                                                    <ContentPresenter HorizontalAlignment="Center" 
+                                                                                                      VerticalAlignment="Center"/>
+                                                                                </Border>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                    <Style.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Opacity" Value="0.9"/>
+                                                                        </Trigger>
+                                                                        <Trigger Property="IsEnabled" Value="False">
+                                                                            <Setter Property="Opacity" Value="0.5"/>
+                                                                            <Setter Property="Content" Value="Cancelling..."/>
+                                                                        </Trigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Button.Style>
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</Window>
