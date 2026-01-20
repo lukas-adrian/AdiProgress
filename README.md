@@ -2,6 +2,10 @@
 
 A centralized progress hub for Windows. Instead of every application spawning its own dialog, **AdiProgress** provides a single, consolidated window for all active tasks. It dynamically scales and adds scrollbars as more processes report in.
 
+![System Overview](Assets/Overview.png)
+
+![System Overview](Assets/Screenshot.png)
+
 ## Key Features
 -   **Shared UI:** One window for multiple independent apps (categorized by name).
 -   **IPC via Named Pipes:** Fast, version-independent communication between .NET 4.8 and .NET 8+.
@@ -18,13 +22,13 @@ A centralized progress hub for Windows. Instead of every application spawning it
 -   
 ## Usage Example
 
-###Configuration
-```
+### Configuration
+```csharp
 //Set the server path
 AdiProgressClient.AdiProgressClient.ServerPath = @"XXX\AdiProgress.exe";
 ```
 ### Synchronous Progress (Standard)
-```
+```csharp
 using AdiProgressClient; // Add this to the top of your file
 
 // Run a sync progress
@@ -41,7 +45,7 @@ using (var progress = new AdiProgress(name, allowCancel: true, parentHandle: Han
 }
 ```
 ### Synchronous "Please Wait" (Marquee)
-```
+```csharp
 // Run a sync marquee progress
 using (var progress = new AdiProgress(name, allowCancel: true, parentHandle: Handle))
 {
@@ -52,7 +56,7 @@ using (var progress = new AdiProgress(name, allowCancel: true, parentHandle: Han
 
 ##  Asynchronous Progress
 
-```
+```csharp
 // Run an async progress with a 500ms delay before showing UI
 using (var progress = new AdiProgress(name, allowCancel: true, showAfterMs: 500))
 {
