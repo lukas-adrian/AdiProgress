@@ -67,5 +67,6 @@ using (var progress = new AdiProgress(name, allowCancel: true, showAfterMs: 500)
     }
 }
 ```
-
+## Example Project
+To see how to integrate the AdiProgressbar, check out the [TestClient example](TestClient/Program.cs) which demonstrates multi-category reporting.
 
