@@ -70,7 +70,7 @@ using (var progress = new AdiProgress(name, allowCancel: true, showAfterMs: 500)
 ## Example Project
 To see how to integrate the AdiProgressbar, check out the [TestClient example](TestClient/Program.cs) which demonstrates multi-category reporting.
 
-[!NOTE] Architecture & IPC Performance During development, an external IPC-based (Named Pipes) progress system was tested. For high-speed file searching, cross-process communication can feel "heavy" or introduce latency due to pipe congestion.
+**_NOTE:_** Architecture & IPC Performance During development, an external IPC-based (Named Pipes) progress system was tested. For high-speed file searching, cross-process communication can feel "heavy" or introduce latency due to pipe congestion.
 
 The project currently uses a local progress bar for an "instant-start" feel. If you have a high-performance solution for externalized progress reporting, feel free to submit a PR or open an issue!
 
